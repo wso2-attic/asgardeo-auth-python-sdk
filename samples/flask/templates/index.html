@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="form-signin justify-content-center">
+      <img class="mb-4" src="{{ url_for('static', filename='images/asgardio.png') }}" alt="" width="72" height="72">
+      <h5 class="h3 mb-3 font-weight-normal">Welcome to Asgardio</h5>
+      <img class="mb-4 row align-items-center center-block" src="{{ url_for('static', filename='images/asgardio_name.png') }}" alt="">
+      <h5>Please sign in</h5>
+      <a href="{{ url_for('login') }}" class="btn btn-lg btn-primary" type="submit">Sign in</a>
+</div>
+
+{% endblock %}

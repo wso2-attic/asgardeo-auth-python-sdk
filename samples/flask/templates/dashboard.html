@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="form-signin">
+      <img class="mb-4" src="{{ url_for('static', filename='images/asgardio.png') }}" alt="" width="72" height="72">
+      <h1>Hi {{ session_data.username }}</h1>
+      <h5>Your access token is : {{ session_data.access_token }}</h5>
+      <a href="{{ url_for('logout') }}" class="btn btn-lg btn-danger" type="submit">SignOut</a>
+</div>
+{% endblock %}
