@@ -8,7 +8,6 @@ import warnings
 import six
 from six.moves import urllib
 
-
 logger = logging.getLogger(__name__)
 
 POSITIONAL_WARNING = 'WARNING'
@@ -118,7 +117,6 @@ def validate_file(filename):
         raise IOError(_IS_DIR_MESSAGE.format(filename))
     elif not os.path.isfile(filename):
         warnings.warn(_MISSING_FILE_MESSAGE.format(filename))
-
 
 
 def _to_bytes(value, encoding='ascii'):

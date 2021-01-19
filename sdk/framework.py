@@ -12,9 +12,11 @@ class Framework(object):
         raise NotImplementedError()
 
     def is_session_data_available(self, request, key):
-        """check the availability of the session variable according to the integrated framework"""
+        """check the availability of the session variable according to the
+        integrated framework """
         raise NotImplementedError()
 
     def clear_session_data(self, request, key):
-        """check the availability of the session variable according to the integrated framework"""
+        """check the availability of the session variable according to the
+        integrated framework """
         raise NotImplementedError()

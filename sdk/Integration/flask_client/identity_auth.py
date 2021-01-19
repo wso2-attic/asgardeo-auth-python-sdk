@@ -1,15 +1,14 @@
 import logging
-from functools import wraps
 
+from flask import request as flask_req
 from flask import session, redirect
 
 from sdk.Integration.flask_client.framework import FlaskFramework
 from sdk.constants.common import TOKEN_RESPONSE, REDIRECT
-from sdk.constants.token import ACCESS_TOKEN, ID_TOKEN, AUTHORIZATION_CODE, STATE
-from sdk.constants.user import USERNAME
+from sdk.constants.token import ACCESS_TOKEN, ID_TOKEN, AUTHORIZATION_CODE, \
+    STATE
 from sdk.exception.identityautherror import IdentityAuthError
 from sdk.identity_auth import IdentityAuth
-from flask import request as flask_req
 
 logger = logging.getLogger(__name__)
 
@@ -25,18 +24,20 @@ class FlaskIdentityAuth(IdentityAuth):
 
     def prepare_params_for_workflow(self):
 
-        constructor_kwargs = dict(redirect_uri=self.auth_config["logout_callback_url"],
-                                  op_configuration=self.op_configuration, pkce=self.auth_config["enable_pkce"],
-                                  prompt=self.auth_config["prompt"], code_verifier=None)
+        constructor_kwargs = dict(
+            redirect_uri=self.auth_config["logout_callback_url"],
+            op_configuration=self.op_configuration,
+            pkce=self.auth_config["enable_pkce"],
+            prompt=self.auth_config["prompt"], code_verifier=None)
         return constructor_kwargs
 
     def sign_in(self):
 
         result = {}
-        if self.framework.is_session_data_available(flask_req,
-                                                    ACCESS_TOKEN) and self.framework.is_session_data_available(
-            flask_req, ID_TOKEN):
-            if self.op_configuration.is_valid_op_config(self.auth_config.tenant):
+        if self.framework.is_session_data_available(flask_req, ACCESS_TOKEN) \
+                and self.framework.is_session_data_available(flask_req, ID_TOKEN):
+            if self.op_configuration.is_valid_op_config(
+                    self.auth_config.tenant):
                 result[REDIRECT] = self.send_sign_out_request()
                 return result
             else:
@@ -75,7 +76,8 @@ class FlaskIdentityAuth(IdentityAuth):
 
         state = self.framework.get_session_data(request, STATE)
         if state != request_state:
-            raise IdentityAuthError("CSRF Warning! State not equal in request and response.")
+            raise IdentityAuthError(
+                "CSRF Warning! State not equal in request and response.")
 
     def send_refresh_token_request(self, refresh_token):
         self.oidc_flow.send_refresh_token_request(refresh_token)
@@ -83,15 +85,5 @@ class FlaskIdentityAuth(IdentityAuth):
     def sign_out(self):
         return redirect(self.send_sign_out_request())
 
-
     def is_session_data_available(self, key):
         return self.framework.is_session_data_available(None, key)
-
-
-    # def requires_auth(self,f):
-    #     @wraps(f)
-    #     def decorated(*args, **kwargs):
-    #         if not self.framework.is_session_data_available(None, USERNAME):
-    #             return redirect(self.auth_config.client_host)
-    #         return f(*args, **kwargs)
-    #     return decorated

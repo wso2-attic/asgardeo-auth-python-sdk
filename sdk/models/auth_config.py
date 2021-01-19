@@ -1,3 +1,5 @@
+"""This module is for holding the authentication related configs."""
+
 from sdk.constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT
 from sdk.exception.identityautherror import IdentityAuthError
 
@@ -21,6 +23,12 @@ defaultConfig = {
 
 
 class AuthConfig:
+    """Base class for holding the authentication related configs.
+
+    Store and retrieve a single credential. This class supports locking
+    such that multiple processes and threads can operate on a single
+    store.
+    """
 
     def __init__(self, auth_config):
 

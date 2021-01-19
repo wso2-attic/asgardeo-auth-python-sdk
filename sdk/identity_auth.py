@@ -1,6 +1,7 @@
 import logging
 
-from sdk.constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT, \
+from sdk.constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, \
+    HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT, \
     TOKEN_RESPONSE, REDIRECT, URL, USER
 from sdk.constants.token import STATE, ACCESS_TOKEN, ID_TOKEN, ID_TOKEN_JWT
 from sdk.constants.user import USERNAME
@@ -30,11 +31,6 @@ post_auth_session_keys = [
     USERNAME
 ]
 
-"""
-Ensure a class only has one instance, and provide a global point of
-access to it.
-"""
-
 
 class IdentityAuthBase(type):
     """
@@ -54,36 +50,40 @@ class IdentityAuthBase(type):
 
 class IdentityAuth(metaclass=IdentityAuthBase):
     """
-    IdentityAuth class.
+    "Registry for oauth clients.
     """
 
     def __init__(self, auth_config, framework):
 
         self.framework = framework
         self.auth_config: AuthConfig = AuthConfig(auth_config)
-        self.op_configuration: OPConfiguration = OPConfiguration(self.auth_config)
+        self.op_configuration: OPConfiguration = OPConfiguration(
+            self.auth_config)
         self.credentials = None
-        self.oidc_flow: OIDCFlow = OIDCFlow(self.auth_config, self.op_configuration)
+        self.oidc_flow: OIDCFlow = OIDCFlow(self.auth_config,
+                                            self.op_configuration)
         self.token_response: TokenResponse = None
 
     def prepare_params_for_workflow(self):
 
-        constructor_kwargs = dict(redirect_uri=self.auth_config["logout_callback_url"],
-                                  op_configuration=self.op_configuration, pkce=self.auth_config["enable_pkce"],
-                                  prompt=self.auth_config["prompt"], code_verifier=None)
+        constructor_kwargs = dict(
+            redirect_uri=self.auth_config["logout_callback_url"],
+            op_configuration=self.op_configuration,
+            pkce=self.auth_config["enable_pkce"],
+            prompt=self.auth_config["prompt"], code_verifier=None)
         return constructor_kwargs
 
     def sign_in(self, request):
-        """Let the framework do the logic and call the send_sign_in_request with code
-        The logic should be as follows:
+        """Let the framework do the logic and call the send_sign_in_request 
+        with code The logic should be as follows:
         Check whether the session available and ID token available
-            if yes :
-                return the user details, id token etc.
-            else:
-                return calling the "send_sign_in_request"
+        if yes :
+            return the user details, id token etc.
+        else:
+            return calling the "send_sign_in_request"
 
-        Before calling the send_sign_in_request you must ensure you extracted the code from the request.
-        Should check whether request has the code.
+        Before calling the send_sign_in_request you must ensure you extracted 
+        the code from the request. Should check whether request has the code. 
         """
         raise NotImplementedError()
 
@@ -92,15 +92,19 @@ class IdentityAuth(metaclass=IdentityAuthBase):
         result = {}
         if code:
             self.token_response = self.oidc_flow.send_token_request(code)
-            authenticated_user = self.get_authenticated_user(self.token_response.decoded_payload)
-            self.set_post_auth_session_data(user=authenticated_user.get_user(), username=authenticated_user.username,
+            authenticated_user = self.get_authenticated_user(
+                self.token_response.decoded_payload)
+            self.set_post_auth_session_data(user=authenticated_user.get_user(),
+                                            username=authenticated_user.username,
                                             access_token=self.token_response.access_token,
                                             id_token=self.token_response.id_token,
                                             id_token_jwt=self.token_response.id_token_jwt)
             result[TOKEN_RESPONSE] = self.token_response, authenticated_user
         else:
             response = self.oidc_flow.send_authorization_request()
-            self.save_authorize_data(request=request, redirect_uri=self.auth_config.login_callback_url, **response)
+            self.save_authorize_data(request=request,
+                                     redirect_uri=self.auth_config.login_callback_url,
+                                     **response)
             result[REDIRECT] = response[URL]
         return result
 
@@ -127,12 +131,15 @@ class IdentityAuth(metaclass=IdentityAuthBase):
 
         state = self.framework.get_session_data(request, STATE)
         if state != request_state:
-            raise IdentityAuthError("CSRF Warning! State not equal in request and response.")
+            raise IdentityAuthError("CSRF Warning! State not equal in request "
+                                    "and response.")
 
     def get_authenticated_user(self, decoded_payload):
 
         params = {
-            "display_name": decoded_payload.get("preferred_username", decoded_payload.get("sub", None)),
+            "display_name": decoded_payload.get("preferred_username",
+                                                decoded_payload.get("sub",
+                                                                    None)),
             "email": decoded_payload.get("email", None),
             "username": decoded_payload.get("sub", None)
         }
@@ -143,23 +150,23 @@ class IdentityAuth(metaclass=IdentityAuthBase):
         self.oidc_flow.send_refresh_token_request(refresh_token)
 
     def set_post_auth_session_data(self, **kwargs):
-        """Save temporary data into session for the User information and the token. These
-        data can be retrieved later when fetching access token.
+        """Save temporary data into session for the User information and the
+        token. These data can be retrieved later when fetching access token.
         """
         for k in kwargs:
             if k in post_auth_session_keys:
                 self.framework.set_session_data(None, k, kwargs[k])
 
     def clear_post_auth_session_data(self):
-        """Save temporary data into session for the User information and the token. These
-        data can be retrieved later when fetching access token.
+        """Save temporary data into session for the User information and the
+        token. These data can be retrieved later when fetching access token.
         """
         for k in post_auth_session_keys:
             self.framework.clear_session_data(None, k)
 
     def get_post_auth_session_data(self):
-        """Save temporary data into session for the User information and the token. These
-        data can be retrieved later when fetching access token.
+        """Save temporary data into session for the User information and the
+        token. These data can be retrieved later when fetching access token.
         """
         result = {}
         for k in post_auth_session_keys:
@@ -167,21 +174,12 @@ class IdentityAuth(metaclass=IdentityAuthBase):
         return result
 
     def sign_out(self):
-        """Let the framework do the logic and call the send_sign_in_request with code
-        The logic should be as follows:
-        Check whether the session available and ID token available
-            if yes :
-                return the user details, id token etc.
-            else:
-                return calling the "send_sign_in_request"
-
-        Before calling the send_sign_in_request you must ensure you extracted the code from the request.
-        Should check whether request has the code.
+        """Let the framework do the logic and call the sign_out()
         """
         raise NotImplementedError()
 
     def send_sign_out_request(self):
-        id_token = self.framework.get_session_data(None,ID_TOKEN_JWT)
+        id_token = self.framework.get_session_data(None, ID_TOKEN_JWT)
         if not id_token:
             return self.auth_config.login_callback_url
         self.clear_post_auth_session_data()

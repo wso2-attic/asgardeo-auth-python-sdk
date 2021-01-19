@@ -9,12 +9,12 @@ INTROSPECTION_ENDPOINT = "introspection_endpoint"
 TENANT = "tenant"
 
 SERVICE_RESOURCES = {
-            "authorize": "/oauth2/authorize",
-            "jwks": "/oauth2/jwks",
-            "logout": "/oidc/logout",
-            "revoke": "/oauth2/revoke",
-            "token": "/oauth2/token",
-            "introspect": "/oauth2/introspect",
-            "tenant": "carbon.super",
-            "well_known": "/oauth2/oidcdiscovery/.well-known/openid-configuration"
-        }
+    "authorize": "/oauth2/authorize",
+    "jwks": "/oauth2/jwks",
+    "logout": "/oidc/logout",
+    "revoke": "/oauth2/revoke",
+    "token": "/oauth2/token",
+    "introspect": "/oauth2/introspect",
+    "tenant": "carbon.super",
+    "well_known": "/oauth2/oidcdiscovery/.well-known/openid-configuration"
+}

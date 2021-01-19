@@ -25,56 +25,28 @@ class Flow(object):
 
 
 class OIDCFlow(Flow):
-    """Does the Web Server Flow .
-
-    OAuth2WebServerFlow objects may be safely pickled and unpickled.
+    """This Class does the Web Server Flow .
     """
 
     def __init__(self, auth_config: AuthConfig = None,
                  op_configuration: OPConfiguration = None,
                  user_agent=None,
                  authorization_header=None, **kwargs):
-        """Constructor for OAuth2WebServerFlow.
+        """Constructor for OIDCFlow. The kwargs argument is used to set extra
+        query parameters on the For example, the access_type and prompt query
+        parameters can be set via kwargs.
 
-        The kwargs argument is used to set extra query parameters on the
-        auth_uri. For example, the access_type and prompt
-        query parameters can be set via kwargs.
-
-        Args:
-            client_id: string, client identifier.
-            client_secret: string client secret.
-            scope: string or iterable of strings, scope(s) of the credentials
-                   being requested.
-            login_callback_url: string, Either the string 'urn:ietf:wg:oauth:2.0:oob'
-                          for a non-web-based application, or a URI that
-                          handles the callback from the authorization server.
-            user_agent: string, HTTP User-Agent to provide for this
-                        application.
-            auth_uri: string, URI for authorization endpoint. For convenience
-                      defaults to Google's endpoints but any OAuth 2.0 provider
-                      can be used.
-            token_endpoint: string, URI for token endpoint. For convenience
-                       defaults to Google's endpoints but any OAuth 2.0
-                       provider can be used.
-            revocation_endpoint: string, URI for revoke endpoint. For convenience
-                        defaults to Google's endpoints but any OAuth 2.0
-                        provider can be used.
-            authorization_header: string, For use with OAuth 2.0 providers that
-                                  require a client to authenticate using a
-                                  header value instead of passing client_secret
-                                  in the POST body.
-            pkce: boolean, default: False, Generate and include a "Proof Key
-                  for Code Exchange" (PKCE) with your authorization and token
-                  requests. This adds security for installed applications that
-                  cannot protect a client_secret. See RFC 7636 for details.
-            code_verifier: bytestring or None, default: None, parameter passed
-                           as part of the code exchange when pkce=True. If
-                           None, a code_verifier will automatically be
-                           generated as part of step1_get_authorize_url(). See
-                           RFC 7636 for details.
-            **kwargs: dict, The keyword arguments are all optional and required
-                      parameters for the OAuth calls.
+        :param auth_config: authentication related user configs.
+        :param op_configuration: openid configuration
+        :param user_agent: string, HTTP User-Agent to provide for this
+               application.
+        :param authorization_header: string, For use with OAuth 2.0 providers
+               that require a client to authenticate using a header value
+               instead of passing client_secret in the POST body.
+        :param kwargs: dict, The keyword arguments are all optional
+               and required parameters for the OAuth calls.
         """
+
         # scope is a required argument, but to preserve backwards-compatibility
         # we don't want to rearrange the positional arguments
         if auth_config.scope is None:
@@ -91,7 +63,8 @@ class OIDCFlow(Flow):
         if OIDC_SCOPE not in self.auth_config.scope:
             self.auth_config.scope.append(OIDC_SCOPE)
 
-        self.auth_config.scope_string = _helpers.scopes_to_string(self.auth_config.scope)
+        self.auth_config.scope_string = _helpers.scopes_to_string(
+            self.auth_config.scope)
         self.user_agent = user_agent
         self.authorization_header = authorization_header
         self.params = _oauth2_web_server_flow_params(kwargs)
@@ -99,15 +72,13 @@ class OIDCFlow(Flow):
     def get_authorize_url(self, login_callback_url=None, state=None):
         """Returns a URI to redirect to the provider.
 
-        Args:
-            login_callback_url: string, Either the string 'urn:ietf:wg:oauth:2.0:oob'
-                          for a non-web-based application, or a URI that
-                          handles the callback from the authorization server.
-                          This parameter is deprecated, please move to passing
-                          the redirect_uri in via the constructor.
-            state: string, Opaque state string which is passed through the
-                   OAuth2 flow and returned to the client as a query parameter
-                   in the callback.
+        Args: login_callback_url: string, Either the string
+        'urn:ietf:wg:oauth:2.0:oob' for a non-web-based application, or a URI
+        that handles the callback from the authorization server. This
+        parameter is deprecated, please move to passing the redirect_uri in
+        via the constructor. state: string, Opaque state string which is
+        passed through the OAuth2 flow and returned to the client as a query
+        parameter in the callback.
 
         Returns:
             A URI as a string to redirect the user to begin the authorization
@@ -142,7 +113,8 @@ class OIDCFlow(Flow):
 
         query_params.update(self.params)
 
-        return _helpers.update_query_params(self.op_configuration.authorization_endpoint, query_params), state
+        return _helpers.update_query_params(
+            self.op_configuration.authorization_endpoint, query_params), state
 
     def send_token_request(self, code=None):
         """Exchanges a code for OAuth2Credentials.
@@ -184,7 +156,8 @@ class OIDCFlow(Flow):
 
         headers = self.get_token_request_headers()
 
-        resp = requests.post(self.op_configuration.token_endpoint, data=body, headers=headers, verify=ssl.CERT_NONE)
+        resp = requests.post(self.op_configuration.token_endpoint, data=body,
+                             headers=headers, verify=ssl.CERT_NONE)
         content = resp.content
         data_response = parse_exchange_token_response(content)
         if resp.status_code == http_lib.client.OK and 'access_token' in data_response:
@@ -227,7 +200,8 @@ class OIDCFlow(Flow):
         resp = requests.get(url=jwks_endpoint, verify=ssl.CERT_NONE)
         try:
             if resp.status_code != http_lib.client.OK:
-                raise IdentityAuthError("Failed to load public keys from JWKS URI " + jwks_endpoint)
+                raise IdentityAuthError(
+                    "Failed to load public keys from JWKS URI " + jwks_endpoint)
 
             keys = resp.json()["keys"]
             return validate_jwt(id_token, keys, client_id, issuer)
@@ -247,11 +221,14 @@ class OIDCFlow(Flow):
 
         headers = self.get_token_request_headers()
 
-        resp = requests.post(token_endpoint, data=post_data, headers=headers, verify=ssl.CERT_NONE)
+        resp = requests.post(token_endpoint, data=post_data, headers=headers,
+                             verify=ssl.CERT_NONE)
         content = resp.content
         data_response = parse_exchange_token_response(content)
         if resp.status_code != http_lib.client.OK and 'access_token' in data_response:
-            raise IdentityAuthError("Invalid status code received in the refresh token response: " + str(resp.status_code))
+            raise IdentityAuthError(
+                "Invalid status code received in the refresh token response: " + str(
+                    resp.status_code))
         return self.get_token_response_from_resp(data_response)
 
     def get_token_response_from_resp(self, resp):
@@ -273,13 +250,20 @@ class OIDCFlow(Flow):
             id_token_jwt = resp['id_token']
 
         logger.info('Successfully retrieved access token')
-        decoded_payload = self.validate_id_token(id_token_jwt, self.auth_config.client_id, self.op_configuration.issuer)
+        decoded_payload = self.validate_id_token(id_token_jwt,
+                                                 self.auth_config.client_id,
+                                                 self.op_configuration.issuer)
         return TokenResponse(
-            access_token, self.auth_config.client_id, self.auth_config.client_secret,
-            refresh_token, token_expiry, self.op_configuration.token_endpoint, self.user_agent,
-            revoke_uri=self.op_configuration.revocation_endpoint, id_token=extracted_id_token,
-            id_token_jwt=id_token_jwt, token_response=resp, scopes=self.auth_config.scope_string,
-            introspection_endpoint=self.op_configuration.introspection_endpoint, decoded_payload=decoded_payload)
+            access_token, self.auth_config.client_id,
+            self.auth_config.client_secret,
+            refresh_token, token_expiry, self.op_configuration.token_endpoint,
+            self.user_agent,
+            revoke_uri=self.op_configuration.revocation_endpoint,
+            id_token=extracted_id_token,
+            id_token_jwt=id_token_jwt, token_response=resp,
+            scopes=self.auth_config.scope_string,
+            introspection_endpoint=self.op_configuration.introspection_endpoint,
+            decoded_payload=decoded_payload)
 
     def send_revoke_token_request(self, access_token):
 
@@ -296,30 +280,30 @@ class OIDCFlow(Flow):
 
         headers = self.get_token_request_headers()
 
-        resp = requests.post(revocation_endpoint, data=post_data, headers=headers,
+        resp = requests.post(revocation_endpoint, data=post_data,
+                             headers=headers,
                              verify=ssl.CERT_NONE)
         if resp.status_code != http_lib.client.OK:
-            raise IdentityAuthError("Invalid status code received in the revoke token response: " + str(resp.status_code))
+            raise IdentityAuthError(
+                "Invalid status code received in the revoke token response: " + str(
+                    resp.status_code))
         return resp.json()
 
     def get_logout_url(self, logout_callback_url=None, id_token=None):
         """Returns a URI to redirect to the provider.
 
-        Args:
-            login_callback_url: string, Either the string 'urn:ietf:wg:oauth:2.0:oob'
-                          for a non-web-based application, or a URI that
-                          handles the callback from the authorization server.
-                          This parameter is deprecated, please move to passing
-                          the redirect_uri in via the constructor.
-            state: string, Opaque state string which is passed through the
-                   OAuth2 flow and returned to the client as a query parameter
-                   in the callback.
+        Args: login_callback_url: string, Either the string
+        'urn:ietf:wg:oauth:2.0:oob' for a non-web-based application, or a URI
+        that handles the callback from the authorization server. This
+        parameter is deprecated, please move to passing the redirect_uri in
+        via the constructor. state: string, Opaque state string which is
+        passed through the OAuth2 flow and returned to the client as a query
+        parameter in the callback.
 
         Returns:
             A URI as a string to redirect the user to begin the authorization
             flow.
         """
-
 
         logout_endpoint = self.op_configuration.end_session_endpoint
 

@@ -2,6 +2,7 @@ import base64
 import hashlib
 import os
 
+
 def code_verifier(n_bytes=64):
     """
     Generates a 'code_verifier' as described in section 4.1 of RFC 7636.

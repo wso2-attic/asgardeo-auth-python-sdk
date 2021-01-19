@@ -1,3 +1,9 @@
+""" Sample Flask based application for Asgardeo OIDC SDK.
+
+This application demonstrates Asgardeo OIDC SDK capabilities.
+
+"""
+
 from functools import wraps
 from http.client import HTTPException
 
@@ -13,12 +19,24 @@ from sdk.exception.identityautherror import IdentityAuthError
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 
+# initialize the app
 identity_auth = FlaskIdentityAuth(auth_config=auth_config)
 
 
 def requires_auth(f):
+    """
+    Decorator to secure the protected endpoint which require user
+    authentication.
+
+    Args:
+        f : function to be decorated
+    """
+
     @wraps(f)
     def decorated(*args, **kwargs):
+        """
+        Decorator to redirect user to the dashboard.
+        """
         if not identity_auth.is_session_data_available(USERNAME):
             return redirect(url_for('dashboard'))
         return f(*args, **kwargs)
@@ -28,6 +46,12 @@ def requires_auth(f):
 
 @app.errorhandler(Exception)
 def handle_auth_error(ex):
+    """
+    Handle an authentication error.
+
+    Args:
+        ex : Exception to handle.
+    """
     response = jsonify(message=str(ex))
     response.status_code = (ex.code if isinstance(ex, HTTPException) else 500)
     return response
@@ -36,17 +60,26 @@ def handle_auth_error(ex):
 @app.route('/')
 @requires_auth
 def home():
+    """
+    Render the login page.
+    """
     session_data = identity_auth.get_post_auth_session_data()
     return render_template('/dashboard.html', session_data=session_data)
 
 
 @app.route('/signin')
 def dashboard():
+    """
+    Render the dashboard page.
+    """
     return render_template('/index.html')
 
 
-@app.route("/login")
+@app.route('/login')
 def login():
+    """
+    Login to implementation from sdk.
+    """
     response = identity_auth.sign_in()
     if REDIRECT in response:
         return redirect(response[REDIRECT])
@@ -54,11 +87,15 @@ def login():
         credentials, authenticated_user = response[TOKEN_RESPONSE]
         return redirect(url_for('home'))
     else:
-        raise IdentityAuthError("Error occurred on the sign in Process Please Try again later")
+        raise IdentityAuthError(
+            'Error occurred on the sign in Process Please Try again later')
 
 
 @app.route('/logout')
 def logout():
+    """
+    Logout implementation from sdk.
+    """
     return identity_auth.sign_out()
 
 
