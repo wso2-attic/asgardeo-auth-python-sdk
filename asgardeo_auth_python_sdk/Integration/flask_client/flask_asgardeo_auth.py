@@ -3,17 +3,16 @@ import logging
 from flask import request as flask_req
 from flask import session, redirect
 
-from sdk.Integration.flask_client.framework import FlaskFramework
-from sdk.constants.common import TOKEN_RESPONSE, REDIRECT
-from sdk.constants.token import ACCESS_TOKEN, ID_TOKEN, AUTHORIZATION_CODE, \
+from .framework import FlaskFramework
+from ... import AsgardeoAuth, AsgardeoAuthError
+from ...constants.common import TOKEN_RESPONSE, REDIRECT
+from ...constants.token import ACCESS_TOKEN, ID_TOKEN, AUTHORIZATION_CODE, \
     STATE
-from sdk.exception.identityautherror import IdentityAuthError
-from sdk.identity_auth import IdentityAuth
 
 logger = logging.getLogger(__name__)
 
 
-class FlaskIdentityAuth(IdentityAuth):
+class FlaskAsgardeoAuth(AsgardeoAuth):
     """
     IdentityAuth class.
     """
@@ -35,10 +34,11 @@ class FlaskIdentityAuth(IdentityAuth):
 
         result = {}
         if self.framework.is_session_data_available(flask_req, ACCESS_TOKEN) \
-                and self.framework.is_session_data_available(flask_req, ID_TOKEN):
+                and self.framework.is_session_data_available(flask_req,
+                                                             ID_TOKEN):
             if self.op_configuration.is_valid_op_config(
                     self.auth_config.tenant):
-                result[REDIRECT] = self.send_sign_out_request()
+                result[REDIRECT] = self.auth_config.client_host
                 return result
             else:
                 result[TOKEN_RESPONSE] = self.oidc_flow.get_authenticated_user(
@@ -76,7 +76,7 @@ class FlaskIdentityAuth(IdentityAuth):
 
         state = self.framework.get_session_data(request, STATE)
         if state != request_state:
-            raise IdentityAuthError(
+            raise AsgardeoAuthError(
                 "CSRF Warning! State not equal in request and response.")
 
     def send_refresh_token_request(self, refresh_token):

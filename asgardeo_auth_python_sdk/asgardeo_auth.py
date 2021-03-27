@@ -1,16 +1,15 @@
 import logging
 
-from sdk.constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, \
-    HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT, \
-    TOKEN_RESPONSE, REDIRECT, URL, USER
-from sdk.constants.token import STATE, ACCESS_TOKEN, ID_TOKEN, ID_TOKEN_JWT
-from sdk.constants.user import USERNAME
-from sdk.exception.identityautherror import IdentityAuthError
-from sdk.models.auth_config import AuthConfig
-from sdk.models.authenticated_user import AuthenticatedUser
-from sdk.models.op_Configuration import OPConfiguration
-from sdk.models.token_response import TokenResponse
-from sdk.oidc_flow import OIDCFlow
+from .constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, \
+    DEFAULT_SUPER_TENANT, TOKEN_RESPONSE, REDIRECT, URL, USER
+from .constants.token import STATE, ACCESS_TOKEN, ID_TOKEN, ID_TOKEN_JWT
+from .constants.user import USERNAME
+from .exception.asgardeo_auth_error import AsgardeoAuthError
+from .models.auth_config import AuthConfig
+from .models.authenticated_user import AuthenticatedUser
+from .models.op_Configuration import OPConfiguration
+from .models.token_response import TokenResponse
+from .oidc_flow import OIDCFlow
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ DefaultConfig = {
     "consent_denied": False,
     "enable_pkce": True,
     "response_mode": None,
-    "scope": [LOGIN_SCOPE, HUMAN_TASK_SCOPE],
+    "scope": [LOGIN_SCOPE],
     "tenant": DEFAULT_SUPER_TENANT,
     "tenant_path": "",
     "prompt": ""
@@ -48,7 +47,7 @@ class IdentityAuthBase(type):
         return cls._instance
 
 
-class IdentityAuth(metaclass=IdentityAuthBase):
+class AsgardeoAuth(metaclass=IdentityAuthBase):
     """
     "Registry for oauth clients.
     """
@@ -56,12 +55,12 @@ class IdentityAuth(metaclass=IdentityAuthBase):
     def __init__(self, auth_config, framework):
 
         self.framework = framework
-        self.auth_config: AuthConfig = AuthConfig(auth_config)
-        self.op_configuration: OPConfiguration = OPConfiguration(
+        self.auth_config = AuthConfig(auth_config)
+        self.op_configuration = OPConfiguration(
             self.auth_config)
         self.credentials = None
-        self.oidc_flow: OIDCFlow = OIDCFlow(self.auth_config,
-                                            self.op_configuration)
+        self.oidc_flow = OIDCFlow(self.auth_config,
+                                  self.op_configuration)
         self.token_response: TokenResponse = None
 
     def prepare_params_for_workflow(self):
@@ -131,7 +130,7 @@ class IdentityAuth(metaclass=IdentityAuthBase):
 
         state = self.framework.get_session_data(request, STATE)
         if state != request_state:
-            raise IdentityAuthError("CSRF Warning! State not equal in request "
+            raise AsgardeoAuthError("CSRF Warning! State not equal in request "
                                     "and response.")
 
     def get_authenticated_user(self, decoded_payload):

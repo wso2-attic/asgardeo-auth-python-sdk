@@ -1,6 +1,4 @@
 from jose import jwt
-from jose.utils import base64url_decode
-from sdk.exception.identityautherror import IdentityAuthError
 
 
 def get_supported_signature_algorithms():

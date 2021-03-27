@@ -1,16 +1,15 @@
 import http
-import ssl
 
 import requests
 
-from sdk.constants.common import ISSUER, TRUE_STRING
-from sdk.constants.endpoints import AUTHORIZATION_ENDPOINT, TOKEN_ENDPOINT, \
+from ..constants.common import ISSUER, TRUE_STRING
+from ..constants.endpoints import AUTHORIZATION_ENDPOINT, TOKEN_ENDPOINT, \
     JWKS_ENDPOINT, REVOKE_TOKEN_ENDPOINT, \
     TENANT, END_SESSION_ENDPOINT, SERVICE_RESOURCES, OP_CONFIG_INITIATED, \
     INTROSPECTION_ENDPOINT
-from sdk.constants.user import USERNAME
-from sdk.exception.identityautherror import IdentityAuthError
-from sdk.models.session import remove_session_parameter, get_session_parameter, \
+from ..constants.user import USERNAME
+from ..exception.asgardeo_auth_error import AsgardeoAuthError
+from ..models.session import remove_session_parameter, get_session_parameter, \
     set_session_parameter
 
 
@@ -91,9 +90,10 @@ class OPConfiguration:
         serverHost = auth_config.server_origin + auth_config.tenant_path
         well_known_url = serverHost + SERVICE_RESOURCES["well_known"]
         try:
-            resp = requests.get(url=well_known_url, verify=ssl.CERT_NONE)
+            resp = requests.get(url=well_known_url,
+                                verify=auth_config.certificate_path)
             if resp.status_code != http.client.OK:
-                raise IdentityAuthError(
+                raise AsgardeoAuthError(
                     "Failed to load OpenID provider configuration from: " + well_known_url)
 
             resp_data = resp.json()
@@ -119,7 +119,7 @@ class OPConfiguration:
             self.tenant = SERVICE_RESOURCES["tenant"]
             self.issuer = serverHost + SERVICE_RESOURCES["token"]
             self.op_config_initiated = True
-            raise IdentityAuthError(
+            raise AsgardeoAuthError(
                 "Initialized OpenID Provider configuration from default "
                 "configuration. Because failed to access wellknown endpoint: "
                 "" + well_known_url)
@@ -149,47 +149,3 @@ def reset_opconfiguration():
     remove_session_parameter(OP_CONFIG_INITIATED)
     remove_session_parameter(ISSUER)
     remove_session_parameter(TENANT)
-
-
-def init_op_configuration(request_params, force_init=False):
-    if not force_init and is_valid_opconfig(request_params[TENANT]):
-        return "OP config is already initiated"
-
-    serverHost = request_params["serverOrigin"] + request_params["tenantPath"]
-    well_known_url = serverHost + SERVICE_RESOURCES["wellKnown"]
-    resp = requests.get(url=well_known_url, verify=ssl.CERT_NONE)
-
-    try:
-        if resp.status_code != http.client.OK:
-            raise IdentityAuthError(
-                "Failed to load OpenID provider configuration from: " + well_known_url)
-        else:
-            resp_data = resp.json()
-            set_authorize_endpoint(resp_data[AUTHORIZATION_ENDPOINT])
-            set_token_endpoint(resp_data[TOKEN_ENDPOINT])
-            set_end_session_endpoint(resp_data[END_SESSION_ENDPOINT])
-            set_jwks_uri(resp_data[JWKS_ENDPOINT])
-            set_revoke_token_endpoint(resp_data[REVOKE_TOKEN_ENDPOINT])
-            set_issuer(resp_data[ISSUER])
-            set_tenant(request_params[TENANT])
-            set_opconfig_initiated()
-
-    except IdentityAuthError:
-
-        resp_data = resp.json()
-        set_authorize_endpoint(
-            request_params["serverOrigin"] + SERVICE_RESOURCES["authorize"])
-        set_token_endpoint(
-            request_params["serverOrigin"] + SERVICE_RESOURCES["token"])
-        set_end_session_endpoint(
-            request_params["serverOrigin"] + SERVICE_RESOURCES["logout"])
-        set_jwks_uri(request_params["serverOrigin"] + SERVICE_RESOURCES["jwks"])
-        set_revoke_token_endpoint(
-            request_params["serverOrigin"] + SERVICE_RESOURCES["revoke"])
-        set_issuer(request_params["serverOrigin"] + SERVICE_RESOURCES["token"])
-        set_tenant(SERVICE_RESOURCES[TENANT])
-        set_opconfig_initiated()
-
-        raise IdentityAuthError(
-            "Initialized OpenID Provider configuration from default "
-            "configuration. Because failed to access wellknown endpoint: " + well_known_url)

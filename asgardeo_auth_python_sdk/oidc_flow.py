@@ -1,20 +1,19 @@
 import datetime
-import ssl
 import urllib
 from venv import logger
 
 import requests
 import http as http_lib
 
-from sdk import _helpers, pkce
-from sdk._helpers import parse_exchange_token_response
-from sdk.common.security import generate_token
-from sdk.constants.token import OIDC_SCOPE
-from sdk.exception.identityautherror import IdentityAuthError
-from sdk.models.auth_config import AuthConfig
-from sdk.models.crypto import validate_jwt
-from sdk.models.op_Configuration import OPConfiguration
-from sdk.models.token_response import TokenResponse, extract_id_token
+from . import pkce, _helpers
+from ._helpers import parse_exchange_token_response
+from .common.security import generate_token
+from .constants.token import OIDC_SCOPE
+from .exception.asgardeo_auth_error import AsgardeoAuthError
+from .models.auth_config import AuthConfig
+from .models.crypto import validate_jwt
+from .models.op_Configuration import OPConfiguration
+from .models.token_response import TokenResponse, extract_id_token
 
 _UTCNOW = datetime.datetime.utcnow
 
@@ -157,7 +156,8 @@ class OIDCFlow(Flow):
         headers = self.get_token_request_headers()
 
         resp = requests.post(self.op_configuration.token_endpoint, data=body,
-                             headers=headers, verify=ssl.CERT_NONE)
+                             headers=headers,
+                             verify=self.auth_config.certificate_path)
         content = resp.content
         data_response = parse_exchange_token_response(content)
         if resp.status_code == http_lib.client.OK and 'access_token' in data_response:
@@ -170,7 +170,7 @@ class OIDCFlow(Flow):
                              str(data_response.get('error_description', '')))
             else:
                 error_msg = 'Invalid response: {0}.'.format(str(resp.status))
-            raise IdentityAuthError(error_msg)
+            raise AsgardeoAuthError(error_msg)
 
     def send_authorization_request(self):
 
@@ -196,22 +196,23 @@ class OIDCFlow(Flow):
 
         jwks_endpoint = self.op_configuration.jwks_uri
         if not jwks_endpoint and not len(jwks_endpoint):
-            raise IdentityAuthError("Invalid JWKS URI found.")
-        resp = requests.get(url=jwks_endpoint, verify=ssl.CERT_NONE)
+            raise AsgardeoAuthError("Invalid JWKS URI found.")
+        resp = requests.get(url=jwks_endpoint,
+                            verify=self.auth_config.certificate_path)
         try:
             if resp.status_code != http_lib.client.OK:
-                raise IdentityAuthError(
+                raise AsgardeoAuthError(
                     "Failed to load public keys from JWKS URI " + jwks_endpoint)
 
             keys = resp.json()["keys"]
             return validate_jwt(id_token, keys, client_id, issuer)
-        except IdentityAuthError:
-            raise IdentityAuthError("Failed to validate the ID Token")
+        except AsgardeoAuthError:
+            raise AsgardeoAuthError("Failed to validate the ID Token")
 
     def send_refresh_token_request(self, refresh_token):
         token_endpoint = self.op_configuration.token_endpoint
         if not token_endpoint:
-            raise IdentityAuthError("Invalid token endpoint found.")
+            raise AsgardeoAuthError("Invalid token endpoint found.")
 
         post_data = {
             'client_id': self.auth_config.client_id,
@@ -222,11 +223,11 @@ class OIDCFlow(Flow):
         headers = self.get_token_request_headers()
 
         resp = requests.post(token_endpoint, data=post_data, headers=headers,
-                             verify=ssl.CERT_NONE)
+                             verify=self.auth_config.certificate_path)
         content = resp.content
         data_response = parse_exchange_token_response(content)
         if resp.status_code != http_lib.client.OK and 'access_token' in data_response:
-            raise IdentityAuthError(
+            raise AsgardeoAuthError(
                 "Invalid status code received in the refresh token response: " + str(
                     resp.status_code))
         return self.get_token_response_from_resp(data_response)
@@ -270,7 +271,7 @@ class OIDCFlow(Flow):
         revocation_endpoint = self.op_configuration.revocation_endpoint
 
         if not revocation_endpoint or not len(revocation_endpoint.strip()):
-            raise IdentityAuthError("Invalid revoke token endpoint found.")
+            raise AsgardeoAuthError("Invalid revoke token endpoint found.")
 
         post_data = {
             'client_id': self.auth_config.client_id,
@@ -282,9 +283,9 @@ class OIDCFlow(Flow):
 
         resp = requests.post(revocation_endpoint, data=post_data,
                              headers=headers,
-                             verify=ssl.CERT_NONE)
+                             verify=self.auth_config.certificate_path)
         if resp.status_code != http_lib.client.OK:
-            raise IdentityAuthError(
+            raise AsgardeoAuthError(
                 "Invalid status code received in the revoke token response: " + str(
                     resp.status_code))
         return resp.json()
@@ -308,10 +309,10 @@ class OIDCFlow(Flow):
         logout_endpoint = self.op_configuration.end_session_endpoint
 
         if not logout_endpoint:
-            raise IdentityAuthError("No logout endpoint found in the session.")
+            raise AsgardeoAuthError("No logout endpoint found in the session.")
 
         if not id_token:
-            raise IdentityAuthError("Invalid id_token found in the session.")
+            raise AsgardeoAuthError("Invalid id_token found in the session.")
 
         if logout_callback_url is not None:
             logger.warning((

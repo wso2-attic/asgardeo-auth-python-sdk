@@ -1,7 +1,7 @@
 import json
 
-from sdk import _helpers
-from sdk.exception.identityautherror import IdentityAuthError
+from .. import _helpers
+from ..exception.asgardeo_auth_error import AsgardeoAuthError
 
 
 class Credentials(object):
@@ -16,7 +16,8 @@ class TokenResponse(Credentials):
     def __init__(self, access_token, client_id, client_secret, refresh_token,
                  token_expiry, token_uri, user_agent, revoke_uri=None,
                  id_token=None, token_response=None, scopes=None,
-                 introspection_endpoint=None, id_token_jwt=None, decoded_payload=None):
+                 introspection_endpoint=None, id_token_jwt=None,
+                 decoded_payload=None):
         """Create an instance of OAuth2Credentials.
 
         This constructor is instantiated by the OIDC_FLOW.
@@ -70,6 +71,7 @@ class TokenResponse(Credentials):
         # refreshed.
         self.invalid = False
 
+
 def extract_id_token(id_token):
     """Extract the JSON payload from a JWT.
 
@@ -87,7 +89,7 @@ def extract_id_token(id_token):
         segments = id_token.split(u'.')
 
     if len(segments) != 3:
-        raise IdentityAuthError(
+        raise AsgardeoAuthError(
             'Wrong number of segments in token: {0}'.format(id_token))
 
     return json.loads(

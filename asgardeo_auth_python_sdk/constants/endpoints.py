@@ -16,5 +16,5 @@ SERVICE_RESOURCES = {
     "token": "/oauth2/token",
     "introspect": "/oauth2/introspect",
     "tenant": "carbon.super",
-    "well_known": "/oauth2/oidcdiscovery/.well-known/openid-configuration"
+    "well_known": "/oauth2/token/.well-known/openid-configuration"
 }

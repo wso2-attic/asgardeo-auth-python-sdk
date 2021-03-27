@@ -1,4 +1,4 @@
-"""This module holds the security related functions to facilitate the sdk."""
+"""This module holds the security related functions to facilitate the asgardeo_auth_python_sdk."""
 
 import string
 import random

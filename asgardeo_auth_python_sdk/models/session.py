@@ -2,14 +2,14 @@ import datetime
 
 from flask import session
 
-from sdk.constants.common import ISSUER
-from sdk.constants.endpoints import AUTHORIZATION_ENDPOINT, TOKEN_ENDPOINT, \
+from ..constants.common import ISSUER
+from ..constants.endpoints import AUTHORIZATION_ENDPOINT, TOKEN_ENDPOINT, \
     END_SESSION_ENDPOINT, JWKS_ENDPOINT, \
     REVOKE_TOKEN_ENDPOINT, OP_CONFIG_INITIATED, TENANT
-from sdk.constants.token import ACCESS_TOKEN, ACCESS_TOKEN_EXPIRE_IN, \
+from ..constants.token import ACCESS_TOKEN, ACCESS_TOKEN_EXPIRE_IN, \
     ACCESS_TOKEN_ISSUED_AT, ID_TOKEN, REFRESH_TOKEN, \
     SCOPE, TOKEN_TYPE
-from sdk.constants.user import DISPLAY_NAME, EMAIL, USERNAME
+from ..constants.user import DISPLAY_NAME, EMAIL, USERNAME
 
 
 def remove_session_parameter(key):

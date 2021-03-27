@@ -28,3 +28,4 @@ REDIRECT = 'redirect'
 USER = 'user'
 TOKEN_RESPONSE = 'token_response'
 URL = 'url'
+CERTIFICATE_PATH = "certificate_path"

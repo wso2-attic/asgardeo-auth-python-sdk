@@ -1,6 +1,6 @@
 from flask import session
 
-from sdk.framework import Framework
+from ...framework import Framework
 
 
 class FlaskFramework(Framework):

@@ -1,7 +1,8 @@
 """This module is for holding the authentication related configs."""
 
-from sdk.constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT
-from sdk.exception.identityautherror import IdentityAuthError
+from ..constants.common import AUTHORIZATION_CODE_TYPE, LOGIN_SCOPE, \
+    HUMAN_TASK_SCOPE, DEFAULT_SUPER_TENANT
+from ..exception.asgardeo_auth_error import AsgardeoAuthError
 
 defaultConfig = {
     "login_callback_url",
@@ -18,7 +19,8 @@ defaultConfig = {
     "tenant_path",
     "prompt",
     "server_origin",
-    "code_verifier"
+    "code_verifier",
+    "certificate_path"
 }
 
 
@@ -42,15 +44,17 @@ class AuthConfig:
         self.consent_denied = False
         self.enable_pkce = False
         self.response_mode = None
-        self.scope = [LOGIN_SCOPE, HUMAN_TASK_SCOPE]
+        self.scope = [LOGIN_SCOPE]
         self.tenant = DEFAULT_SUPER_TENANT
         self.tenant_path = "/t/" + DEFAULT_SUPER_TENANT
         self.prompt = ""
         self.server_origin = "https://localhost:9443"
         self.code_verifier = None
+        self.certificate_path = None
 
         for key in auth_config:
             if key in defaultConfig:
                 setattr(self, key, auth_config[key])
             else:
-                raise IdentityAuthError("Improper kay value passed in the autoconfig. Please check the auth config")
+                raise AsgardeoAuthError(
+                    "Improper key value passed in the autoconfig. Please check the auth config")
