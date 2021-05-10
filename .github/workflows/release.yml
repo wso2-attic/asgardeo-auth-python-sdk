@@ -1,0 +1,65 @@
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Upload Python Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseFlag:
+        description: 'Are you sure you you wanted to release?'
+        required: true
+        default: 'No'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        python -m pip install --upgrade pip
+        pip install --upgrade bump2version
+        pip install setuptools wheel twine
+
+    - name: Build and publish
+      id: build-and-publish
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      if: "contains(github.event.inputs.releaseFlag, 'yes') || contains(github.event.inputs.releaseFlag, 'Yes') || contains(github.event.inputs.releaseFlag, 'YES')"
+      run: |
+        bumpversion --tag release --message '[Released] =  {current_version} → {new_version}'
+        python setup.py sdist
+        export FOO=$(python setup.py --version)
+        echo "::set-output name=VERSION::$FOO"
+        twine upload dist/*
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.build-and-publish.outputs.VERSION }}
+        release_name: ${{ steps.build-and-publish.outputs.VERSION }} Released !
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: ./dist/Asgardeo Auth Python SDK-${{steps.build-and-publish.outputs.VERSION}}.tar.gz
+        asset_name: Asgardeo Auth Python SDK-${{steps.build-and-publish.outputs.VERSION }}.tar.gz
+        asset_content_type: application/tar+gzip
