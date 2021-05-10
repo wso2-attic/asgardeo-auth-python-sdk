@@ -30,8 +30,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.ASGARDIO_GITHUB_BOT_TOKEN }}
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "version.bump@github.action.com"
+        git config --local user.name "asgardeo-github-bot"
         bumpversion patch
         git push --follow-tags
       if: github.repository == 'asgardeo/asgardeo-auth-python-sdk'
