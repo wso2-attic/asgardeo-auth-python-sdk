@@ -22,8 +22,8 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.email "version.bump@github.action.com"
+        git config --local user.name "asgardeo-github-bot"
         python -m pip install --upgrade pip
         pip install --upgrade bump2version
         pip install setuptools wheel twine
