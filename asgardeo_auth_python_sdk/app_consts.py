@@ -1,6 +1,6 @@
 name = 'Asgardeo Auth Python SDK'
 packages = ('asgardeo_auth_python_sdk', 'asgardeo_auth_python_sdk.*')
-version = "0.0.45-dev0"
+version = "0.0.46-dev0"
 author = 'Asgardeo'
 homepage = 'https://github.com/asgardeo/asgardeo-auth-python-sdk#readme'
 license_name = 'Apache-2.0'
