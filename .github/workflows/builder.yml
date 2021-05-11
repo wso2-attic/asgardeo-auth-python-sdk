@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with: 
+        token: ${{ secrets.ASGARDIO_GITHUB_BOT_TOKEN }}
+      if: github.repository == 'asgardeo/asgardeo-auth-python-sdk'
+      
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -30,8 +34,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Bump version
-      env:
-        GITHUB_TOKEN: ${{ secrets.ASGARDIO_GITHUB_BOT_TOKEN }}
       run: |
         git config --local user.email "version.bump@github.action.com"
         git config --local user.name "asgardeo-github-bot"
