@@ -1,6 +1,6 @@
 from distutils.core import setup
 from setuptools import find_packages
-from asgardeo_auth_python_sdk.app_consts import name, version, homepage, license_name, bug_tracker, \
+from lib.app_consts import name, version, homepage, license_name, bug_tracker, \
     keywords, description, download_url, author, author_email,packages
 
 
@@ -27,7 +27,7 @@ setup(
         'Framework :: Flask',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved ::' + license_name,
+        'License :: OSI Approved :: ' + license_name,
         'Operating System :: OS Independent'
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
