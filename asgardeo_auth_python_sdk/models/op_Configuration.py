@@ -2,84 +2,11 @@ import http
 
 import requests
 
-from ..constants.common import ISSUER, TRUE_STRING
+from ..constants.common import ISSUER
 from ..constants.endpoints import AUTHORIZATION_ENDPOINT, TOKEN_ENDPOINT, \
-    JWKS_ENDPOINT, REVOKE_TOKEN_ENDPOINT, \
-    TENANT, END_SESSION_ENDPOINT, SERVICE_RESOURCES, OP_CONFIG_INITIATED, \
-    INTROSPECTION_ENDPOINT
-from ..constants.user import USERNAME
+    JWKS_ENDPOINT, REVOKE_TOKEN_ENDPOINT, END_SESSION_ENDPOINT, \
+    SERVICE_RESOURCES, INTROSPECTION_ENDPOINT
 from ..exception.asgardeo_auth_error import AsgardeoAuthError
-from ..models.session import remove_session_parameter, get_session_parameter, \
-    set_session_parameter
-
-
-def is_op_config_initiated():
-    return get_session_parameter(OP_CONFIG_INITIATED) and get_session_parameter(
-        OP_CONFIG_INITIATED) == TRUE_STRING
-
-
-def set_authorize_endpoint(authorization_endpoint):
-    set_session_parameter(AUTHORIZATION_ENDPOINT, authorization_endpoint)
-
-
-def set_token_endpoint(token_endpoint):
-    set_session_parameter(TOKEN_ENDPOINT, token_endpoint)
-
-
-def set_end_session_endpoint(end_session_endpoint):
-    set_session_parameter(END_SESSION_ENDPOINT, end_session_endpoint)
-
-
-def set_jwks_uri(jwks_endpoint):
-    set_session_parameter(JWKS_ENDPOINT, jwks_endpoint)
-
-
-def set_revoke_token_endpoint(revoke_token_endpoint):
-    set_session_parameter(REVOKE_TOKEN_ENDPOINT, revoke_token_endpoint)
-
-
-def set_opconfig_initiated():
-    set_session_parameter(OP_CONFIG_INITIATED, TRUE_STRING)
-
-
-def set_tenant(tenant):
-    set_session_parameter(TENANT, tenant)
-
-
-def set_issuer(issuer):
-    set_session_parameter(ISSUER, issuer)
-
-
-def get_authorize_endpoint():
-    return get_session_parameter(AUTHORIZATION_ENDPOINT)
-
-
-def get_token_endpoint():
-    return get_session_parameter(AUTHORIZATION_ENDPOINT)
-
-
-def get_end_session_endpoint():
-    return get_session_parameter(END_SESSION_ENDPOINT)
-
-
-def get_jwks_uri():
-    return get_session_parameter(JWKS_ENDPOINT)
-
-
-def get_username():
-    return get_session_parameter(USERNAME)
-
-
-def get_tenant():
-    return get_session_parameter(TENANT)
-
-
-def get_issuer():
-    return get_session_parameter(ISSUER)
-
-
-def is_valid_opconfig(tenant):
-    return is_op_config_initiated() and get_tenant() and get_tenant() == tenant
 
 
 class OPConfiguration:
@@ -138,14 +65,3 @@ class OPConfiguration:
     def is_valid_op_config(self, tenant):
 
         return self.op_config_initiated and tenant == self.tenant
-
-
-def reset_opconfiguration():
-    remove_session_parameter(AUTHORIZATION_ENDPOINT)
-    remove_session_parameter(TOKEN_ENDPOINT)
-    remove_session_parameter(END_SESSION_ENDPOINT)
-    remove_session_parameter(JWKS_ENDPOINT)
-    remove_session_parameter(REVOKE_TOKEN_ENDPOINT)
-    remove_session_parameter(OP_CONFIG_INITIATED)
-    remove_session_parameter(ISSUER)
-    remove_session_parameter(TENANT)
