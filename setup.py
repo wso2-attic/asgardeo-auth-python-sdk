@@ -13,6 +13,7 @@ setup(
     license=license_name,
     description=description,
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author=author,
     author_email=author_email,
     url=homepage,
