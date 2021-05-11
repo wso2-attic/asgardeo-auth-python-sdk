@@ -1,4 +1,4 @@
-name = 'asgardeo auth python sdk'
+name = 'asgardeo-auth-python-sdk'
 packages = ('lib', 'lib.*')
 version = "0.1.0-dev0"
 author = 'Asgardeo'
