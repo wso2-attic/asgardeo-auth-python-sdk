@@ -1,5 +1,5 @@
 name = 'Asgardeo Auth Python SDK'
-packages = ('asgardeo_auth_python_sdk', 'asgardeo_auth_python_sdk.*')
+packages = ('lib', 'lib.*')
 version = "0.0.3-dev0"
 author = 'Asgardeo'
 homepage = 'https://github.com/asgardeo/asgardeo-auth-python-sdk#readme'
