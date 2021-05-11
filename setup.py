@@ -39,10 +39,7 @@ setup(
     ],
     project_urls={
         'Documentation': homepage,
-        'Commercial License': '',
         'Bug Tracker': bug_tracker,
-        'Source Code': '',
-        'Blog': '',
-        'Donate': '',
+        'Source Code': homepage,
     }
 )
