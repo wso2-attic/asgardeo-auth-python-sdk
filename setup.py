@@ -3,6 +3,8 @@ from setuptools import find_packages
 from lib.app_consts import name, version, homepage, license_name, bug_tracker, \
     keywords, description, download_url, author, author_email,packages
 
+with open('README.md') as f:
+    long_description = f.read()
 
 setup(
     name=name,
@@ -10,6 +12,8 @@ setup(
     version=version,
     license=license_name,
     description=description,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author=author,
     author_email=author_email,
     url=homepage,
