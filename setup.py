@@ -1,25 +1,29 @@
 from distutils.core import setup
 from setuptools import find_packages
-from lib.app_consts import name, version, homepage, license_name, bug_tracker, \
-    keywords, description, download_url, author, author_email,packages
+from asgardeo_auth import __name__, __version__, __packages__, __license_name__, \
+    __description__, __author__, __author_email__, __homepage__, \
+    __download_url__, __keywords__, __bug_tracker__
 
 with open('README.md') as f:
     long_description = f.read()
 
+
 setup(
-    name=name,
-    packages=find_packages(include=packages),
-    version=version,
-    license=license_name,
-    description=description,
+    name=__name__,
+    packages=find_packages(include=__packages__),
+    version=__version__,
+    license=__license_name__,
+    description=__description__,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author=author,
-    author_email=author_email,
-    url=homepage,
-    download_url=download_url,
-    keywords=keywords,
+    author=__author__,
+    author_email=__author_email__,
+    url=__homepage__,
+    download_url=__download_url__,
+    keywords=__keywords__,
     install_requires=[
+        'six',
+        'requests',
         'python-jose>=3.2.0',
         'Flask>=1.1.2'
     ],
@@ -31,7 +35,7 @@ setup(
         'Framework :: Flask',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: ' + license_name,
+        'License :: OSI Approved :: ' + __license_name__,
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
@@ -42,8 +46,8 @@ setup(
         'Programming Language :: Python :: 3.9'
     ],
     project_urls={
-        'Documentation': homepage,
-        'Bug Tracker': bug_tracker,
-        'Source Code': homepage,
+        'Documentation': __homepage__,
+        'Bug Tracker': __bug_tracker__,
+        'Source Code': __homepage__,
     }
 )
