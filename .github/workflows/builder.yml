@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'lib/app_consts.py'
+      - 'asgardeo_auth/app_consts.py'
       - '.bumpversion.cfg'
 jobs:
  build:
