@@ -25,7 +25,8 @@ setup(
         'six',
         'requests',
         'python-jose>=3.2.0',
-        'Flask>=1.1.2'
+        'Flask>=1.1.2',
+        'pyOpenSSL>=20.0.1'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
