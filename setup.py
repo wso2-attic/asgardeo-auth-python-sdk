@@ -1,26 +1,48 @@
 from distutils.core import setup
 from setuptools import find_packages
-from asgardeo_auth import __name__, __version__, __packages__, __license_name__, \
-    __description__, __author__, __author_email__, __homepage__, \
-    __download_url__, __keywords__, __bug_tracker__
 
 with open('README.md') as f:
     long_description = f.read()
 
 
+name = 'asgardeo-auth-python-sdk'
+packages = ('asgardeo_auth', 'asgardeo_auth.*')
+version = "0.1.3-dev0"
+author = 'Asgardeo'
+homepage = 'https://github.com/asgardeo/asgardeo-auth-python-sdk#readme'
+license_name = 'Apache Software License'
+description = "Asgardeo Auth Python SDK."
+bug_tracker = 'https://github.com/asgardeo/asgardeo-auth-python-sdk/issues'
+keywords = [
+    "Asgardeo",
+    "OIDC",
+    "OAuth2",
+    "Authentication",
+    "Authorization"
+]
+download_url = 'https://github.com/asgardeo/asgardeo-auth-python-sdk/releases'
+author = "Asgardeo",
+author_email = "beta@asgardeo.io"
+default_user_agent = '{}/{} (+{})'.format(name, version, homepage)
+default_json_headers = [
+    ('Content-Type', 'application/json'),
+    ('Cache-Control', 'no-store'),
+    ('Pragma', 'no-cache'),
+]
+
 setup(
-    name=__name__,
-    packages=find_packages(include=__packages__),
-    version=__version__,
-    license=__license_name__,
-    description=__description__,
+    name=name,
+    packages=find_packages(include=packages),
+    version=version,
+    license=license_name,
+    description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author=__author__,
-    author_email=__author_email__,
-    url=__homepage__,
-    download_url=__download_url__,
-    keywords=__keywords__,
+    author=author,
+    author_email=author_email,
+    url=homepage,
+    download_url=download_url,
+    keywords=keywords,
     install_requires=[
         'six',
         'requests',
@@ -36,7 +58,7 @@ setup(
         'Framework :: Flask',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: ' + __license_name__,
+        'License :: OSI Approved :: ' + license_name,
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
@@ -47,8 +69,8 @@ setup(
         'Programming Language :: Python :: 3.9'
     ],
     project_urls={
-        'Documentation': __homepage__,
-        'Bug Tracker': __bug_tracker__,
-        'Source Code': __homepage__,
+        'Documentation': homepage,
+        'Bug Tracker': bug_tracker,
+        'Source Code': homepage,
     }
 )
