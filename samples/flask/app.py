@@ -10,8 +10,8 @@ from http.client import HTTPException
 from flask import Flask, redirect, jsonify, url_for, render_template
 
 from samples.flask.conf import auth_config
-from asgardeo_auth_python_sdk.Integration.flask_client import FlaskAsgardeoAuth
-from asgardeo_auth_python_sdk.exception.asgardeo_auth_error import \
+from asgardeo_auth.Integration.flask_client import FlaskAsgardeoAuth
+from asgardeo_auth.exception.asgardeo_auth_error import \
     AsgardeoAuthError
 from samples.flask.constants import REDIRECT, TOKEN_RESPONSE, USERNAME
 
