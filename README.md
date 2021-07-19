@@ -31,8 +31,9 @@ pip install asgardeo-auth-python-sdk
 
 ## Getting Started
 
-Python Authentication SDK is architectured in a way that any python framework could be integrated with the Core SDK. Currently the SDK itself supports Flask framework. 
-you can find the documentation [here](samples/flask/Readme.md).
+Python Authentication SDK is architectured in a way that any python framework could be integrated with the Core SDK
+. Currently the SDK itself supports Flask framework. 
+you can find the documentation [here](https://github.com/asgardeo/asgardeo-auth-python-sdk/tree/main/samples/flask/Readme.md).
 
 Still you can implement your own way of implementation using the APIs provided by the core.
 
@@ -40,8 +41,8 @@ Still you can implement your own way of implementation using the APIs provided b
 
 ### Prerequisites
 
--   `Node.js` (version 10 or above).
--   `npm` package manager.
+-   `Python`
+-   `pip` package manager.
 
 ### Installing Dependencies
 
@@ -62,7 +63,7 @@ Important: And please be advised that security issues must be reported to securi
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0. See the [LICENSE](https://github.com/asgardeo/asgardeo-auth-python-sdk/blob/main/LICENSE) file for details.
 
 
 
