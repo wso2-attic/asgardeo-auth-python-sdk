@@ -2,9 +2,9 @@
 
 ![Builder](https://github.com/asgardeo/asgardeo-auth-python-sdk/workflows/Builder/badge.svg)
 [![Downloads](https://pepy.tech/badge/asgardeo-auth-python-sdk)](https://pepy.tech/project/asgardeo-auth-python-sdk)
-[![Stackoverflow](https://img.shields.io/badge/Ask%20for%20help%20on-Stackoverflow-orange)](https://stackoverflow.com/questions/tagged/wso2is)
+[![Stackoverflow](https://img.shields.io/badge/Ask%20for%20help%20on-Stackoverflow-orange)](https://stackoverflow.com/questions/tagged/asgardeo)
 [![Join the chat at https://join.slack.com/t/wso2is/shared_invite/enQtNzk0MTI1OTg5NjM1LTllODZiMTYzMmY0YzljYjdhZGExZWVkZDUxOWVjZDJkZGIzNTE1NDllYWFhM2MyOGFjMDlkYzJjODJhOWQ4YjE](https://img.shields.io/badge/Join%20us%20on-Slack-%23e01563.svg)](https://join.slack.com/t/wso2is/shared_invite/enQtNzk0MTI1OTg5NjM1LTllODZiMTYzMmY0YzljYjdhZGExZWVkZDUxOWVjZDJkZGIzNTE1NDllYWFhM2MyOGFjMDlkYzJjODJhOWQ4YjE)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/wso2/product-is/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/asgardeo/asgardeo-auth-python-sdk/blob/main/LICENSE)
 
 
 Asgardeo Auth Python SDK provides the core methods that are needed to implement OIDC authentication in Python based apps. This SDK can be used to build SDKs for Web Applications from different frameworks such as Flask, Django and various other frameworks that use Python.
@@ -19,7 +19,7 @@ Asgardeo Auth Python SDK provides the core methods that are needed to implement 
 -   [License](#license)
 
 ## Introduction
-Python Authentication SDK for WSO2 Identity server (aka Product IS) brings up the fast and secure way to add user login to a Python web applications with the help of the WSO2 Identity Server(WSO2 IS).
+Python Authentication SDK for Asgardeo brings up the fast and secure way to add user login to a Python web applications with the help of Asgardeo.
 
 ## Install
 
