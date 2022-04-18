@@ -10,5 +10,5 @@ auth_config = {
     "server_origin": "https://localhost:9443",
     "tenant_path": "/t/wso2.com",
     "tenant": "wso2.com",
-    "certificate_path": "samples/flask/cert/wso2.crt"
+    "certificate_path": "cert/wso2.crt"
 }
