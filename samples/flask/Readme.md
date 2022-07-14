@@ -4,24 +4,25 @@
 ### Register an Application
 
 Run Developer Portal and register a Web Application with minimal configuration. 
-Give `https://localhost:5000/login` as the callback URL.
+Give `https://localhost:3000/login` as the callback URL.
 
 ### Setup and run sample
 
-1. Update your configurations in `config.py` with Asgardeo App Register details.
+1. Update your configurations in `conf.py` with Asgardeo App Register details.
 
     E.g.
 
     ```python
     auth_config = {
-        "login_callback_url": "https://127.0.0.1:5000/login",
-        "logout_callback_url": "https://127.0.0.1:5000/signin",
-        "client_host": "https://127.0.0.1:5000",
+        "login_callback_url": "https://localhost:3000/login",
+        "logout_callback_url": "https://localhost:3000/signin",
+        "client_host": "https://localhost:3000",
         "client_id": "<client_id>",
-        "client_secret": "client_secret",
-        "server_origin": "https://localhost:9443",
+        "client_secret": "<client_secret>",
+        "server_origin": "https://api.asgardeo.io",
         "tenant_path": "/t/<tenant>",
-        "tenant": "<tenant>"
+        "tenant": "<tenant>",
+        "certificate_path": "cert/wso2.crt"
     }
     ```
 
