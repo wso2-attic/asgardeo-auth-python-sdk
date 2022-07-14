@@ -66,7 +66,7 @@ Before trying out the sample apps, you need to create an application in **Asgard
     }
 ```
 
-3. Obtain an SSL certificate for [https://console.asgardeo.io/](https://console.asgardeo.io/) and replace the content of wso2.crt with the obtained one. 
+3. Obtain an [SSL certificate](https://www.globalsign.com/en/blog/how-to-view-ssl-certificate-details) for [https://console.asgardeo.io/](https://console.asgardeo.io/) and replace the content of wso2.crt with the obtained one. 
 
 4. Run `pip3 install -r requirements.txt`
 
