@@ -1,7 +1,7 @@
 # [DEPRECATED] Asgardeo-auth-python-sdk
 
 ## :warning: Warning!
-### Python SDK is no longer encoraged and enriched by Asgardeo and may not work with the latest Python versions.
+### Python SDK is no longer encouraged and enriched by Asgardeo and may not work with the latest Python versions.
 ### You can implement login using [Authorization Code flow](https://wso2.com/asgardeo/docs/guides/authentication/oidc/implement-auth-code/#prerequisites) with Asgardeo using OIDC standards.
 ---
 
